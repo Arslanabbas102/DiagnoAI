@@ -5,3 +5,4 @@ All commits with GitHub noreply email for proper graph attribution.
 
 - 2020-01-01: Integration improvements
 - 2020-01-02: Integration improvements
+- 2020-01-02: Feature development and testing
