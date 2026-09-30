@@ -1,0 +1,56 @@
+/* Testimonial slider */
+.swiper-pagination-bullet {
+  width: 8px !important;
+  height: 8px !important;
+  opacity: 1 !important;
+  background: #cfd6e4 !important;
+  transition: all 0.25s ease;
+}
+.swiper-pagination-bullet-active {
+  width: 24px !important;
+  border-radius: 999px !important;
+  background: #2a4bdb !important;
+}
+.swiper {
+  padding-bottom: 56px !important;
+}
+.swiper-pagination {
+  bottom: 8px !important;
+}
+
+/* Toast notifications */
+:root {
+  --toastify-font-family: "Inter", system-ui, sans-serif;
+  --toastify-color-info: #2a4bdb;
+  --toastify-color-success: #0b967e;
+  --toastify-color-warning: #d97706;
+  --toastify-color-error: #e11d48;
+  --toastify-text-color-light: #0b1220;
+  --toastify-toast-min-height: 56px;
+}
+.Toastify__toast {
+  border-radius: 14px !important;
+  border: 1px solid #e6e9f0;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04), 0 18px 40px -16px rgba(15, 23, 42, 0.25) !important;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 14px !important;
+}
+.Toastify__progress-bar {
+  height: 3px !important;
+}
+
+/* Hero X-ray scan line */
+@keyframes scan {
+  from { top: 0%; }
+  to { top: 75%; }
+}
+.scan-line {
+  animation: scan 2.6s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-line,
+  .animate-float {
+    animation: none !important;
+  }
+}

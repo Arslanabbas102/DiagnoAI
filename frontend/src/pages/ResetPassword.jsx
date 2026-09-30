@@ -1,0 +1,175 @@
+import React, { useState, useContext } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../config";
+import { toast } from "react-toastify";
+import { authContext } from "../context/AuthContext.jsx";
+import {
+  HiOutlineSparkles,
+  HiOutlineShieldCheck,
+  HiOutlineBeaker,
+  HiOutlineUserGroup,
+  HiOutlineKey,
+} from "react-icons/hi2";
+
+const BrandPanel = ({ title, text, points }) => (
+  <aside className="relative hidden overflow-hidden rounded-3xl bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 p-10 text-white shadow-lift lg:flex lg:flex-col lg:justify-between xl:p-12">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 bg-grid opacity-20"
+    />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl"
+    />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-white/10 blur-3xl"
+    />
+    <div className="relative">
+      <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-white ring-1 ring-inset ring-white/20">
+        <HiOutlineSparkles className="h-4 w-4" aria-hidden="true" />
+        DiagnoAI
+      </span>
+      <h2 className="mt-8 max-w-sm text-[34px] font-bold leading-[1.15] text-white">
+        {title}
+      </h2>
+      <p className="mt-4 max-w-sm text-[16px] leading-7 text-brand-100">
+        {text}
+      </p>
+    </div>
+    <ul className="relative mt-12 space-y-4">
+      {points.map(({ icon: Icon, label }) => (
+        <li key={label} className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-inset ring-white/20">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <span className="text-[15px] font-medium text-white/90">{label}</span>
+        </li>
+      ))}
+    </ul>
+  </aside>
+);
+
+const trustPoints = [
+  { icon: HiOutlineShieldCheck, label: "Secure, encrypted health records" },
+  { icon: HiOutlineBeaker, label: "AI-assisted lab report insights" },
+  { icon: HiOutlineUserGroup, label: "Verified doctors and specialists" },
+];
+
+
+const ResetPassword = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { dispatch } = useContext(authContext);
+  const { id, token } = useParams();
+
+  const [formData, setFormData] = useState({
+    password: "",
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${BASE_URL}/reset-password/${id}/${token}`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.message);
+      }
+
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: {
+          user: result.data,
+          token: result.token,
+          role: result.role,
+        },
+      });
+
+      setLoading(false);
+      toast.success(result.message);
+      navigate("/login");
+    } catch (err) {
+      toast.error(err.message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <section className="bg-hero py-10 lg:py-16">
+      <div className="container">
+        <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-10">
+          <div className="card animate-fade-up flex flex-col justify-center p-6 sm:p-10 xl:p-12">
+            <div className="mx-auto w-full max-w-[420px]">
+              <span className="icon-tile">
+                <HiOutlineKey className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <span className="eyebrow mt-6">Account recovery</span>
+              <h1 className="mt-4 text-[28px] font-bold leading-tight text-ink md:text-[32px]">
+                Set a new password
+              </h1>
+              <p className="mt-2 text-[15px] leading-6 text-muted">
+                Choose a strong password you have not used before.
+              </p>
+
+              <form className="mt-8 space-y-5" onSubmit={submitHandler}>
+                <div>
+                  <label htmlFor="reset-password" className="form__label">
+                    New password
+                  </label>
+                  <input
+                    id="reset-password"
+                    type="password"
+                    placeholder="Enter a new password"
+                    name="password"
+                    autoComplete="new-password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="form__input"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary w-full py-3.5"
+                >
+                  {loading ? "Please wait..." : "Update password"}
+                </button>
+              </form>
+
+              <p className="mt-8 text-center text-[15px] text-muted">
+                Remembered your password?{" "}
+                <Link
+                  to="/login"
+                  className="font-semibold text-brand-600 hover:text-brand-700"
+                >
+                  Back to sign in
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          <BrandPanel
+            title="Back to your care in seconds."
+            text="Once updated, sign in with your new password to access reports, bookings and your care team."
+            points={trustPoints}
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ResetPassword;
