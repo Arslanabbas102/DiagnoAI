@@ -1,0 +1,3 @@
+# Exclude the web app code from GitHub's language statistics
+frontend/** linguist-detectable=false
+backend/**/*.js linguist-detectable=false
